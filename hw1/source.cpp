@@ -11,7 +11,7 @@ int main ()
 {
     FILE *in, *out;
     in = fopen("input.txt", "r");
-    out = fopen("2015_17271", "w");
+    out = fopen("2015_17271.out", "w");
     int t;
     fscanf(in, "%d\n", &t);
     while(t--)
@@ -22,6 +22,7 @@ int main ()
         map<pair<int, char>, vector<int> > m;
         char rexp[5], exp[100], file[100];
         int sidx = 0;
+        int visited[100] = {};
         fscanf(in, "%s %s %s", rexp, exp, file);
         //printf("%s %s %s", rexp, exp, file);
         for (int i = 0; exp[i] != 0; i++)
@@ -45,6 +46,39 @@ int main ()
                 m[make_pair(sidx, front)].push_back(sidx + 1);
                 reg.push(make_pair(sidx, sidx + 1));
                 sidx += 2;
+            }
+            else if (front == '+')
+            {
+                pi a = reg.top();
+                reg.pop();
+                pi b = reg.top();
+                reg.pop();
+                m[make_pair(sidx, 'e')].push_back(a.first);
+                m[make_pair(sidx, 'e')].push_back(b.first);
+                m[make_pair(a.second, 'e')].push_back(sidx + 1);
+                m[make_pair(b.second, 'e')].push_back(sidx + 1);
+                reg.push(make_pair(sidx, sidx + 1));
+                sidx += 2;
+            }
+            else if (front == '*')
+            {
+                pi p = reg.top();
+                reg.pop();
+                m[make_pair(p.second, 'e')].push_back(p.first);
+                m[make_pair(sidx, 'e')].push_back(p.first);
+                m[make_pair(p.second, 'e')].push_back(sidx + 1);
+                m[make_pair(sidx, 'e')].push_back(sidx + 1);
+                reg.push(make_pair(sidx, sidx + 1));
+                sidx += 2;
+            }
+            else if (front == '.')
+            {
+                pi b = reg.top();
+                reg.pop();
+                pi f = reg.top();
+                reg.pop();
+                m[make_pair(f.second, 'e')].push_back(b.first);
+                reg.push(make_pair(f.first, b.second));
             }
             //printf("%c", Queue.front());
             Queue.pop();
